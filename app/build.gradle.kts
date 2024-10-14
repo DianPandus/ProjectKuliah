@@ -50,22 +50,47 @@ android {
 }
 
 dependencies {
+    // Core KTX and AppCompat
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat) // Menambahkan AppCompat
+
+    // Material 3 and Compose libraries
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material)
+
+    // Compose BOM to manage consistent Compose versions
     implementation(platform(libs.androidx.compose.bom))
+
+    // UI and tooling dependencies
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.material)
+
+    // Lifecycle and ViewModel Compose
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+
+    // Activity Compose
+    implementation(libs.androidx.activity.compose)
+
+    // Retrofit and Gson for API calls and JSON parsing
+    implementation(libs.retrofit) // Menambahkan Retrofit
+    implementation(libs.gson) // Menambahkan Gson
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.androidx.navigation.compose) // Menambahkan Retrofit Gson Converter
+
+
+    // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debug dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
 }
+

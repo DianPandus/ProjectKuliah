@@ -3,10 +3,31 @@ package com.yanz.projectkuliah
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
-    val state = mutableStateOf(dummyRestaurans.restoreSelections())
+    private var restInterface: RestaurantsApiService
+    val state = mutableStateOf(emptyList<Restaurant>())
+
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        exception.printStackTrace()
+    }
+
+    init {
+        val retrofit: Retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://yanz-restaurant-default-rtdb.firebaseio.com/")
+            .build()
+
+        restInterface = retrofit.create(RestaurantsApiService::class.java)
+        getRestaurants()
+    }
 
     fun toggleFavorite(id: Int) {
         val restaurants = state.value.toMutableList()
@@ -17,7 +38,7 @@ class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewMode
         state.value = restaurants
     }
 
-    private fun storeSelection(item: Restauran) {
+    private fun storeSelection(item: Restaurant) {
         val savedToggled = stateHandle.get<List<Int>?>(FAVORITES)
             .orEmpty().toMutableList()
         if (item.isFavorite) savedToggled.add(item.id)
@@ -25,7 +46,24 @@ class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewMode
         stateHandle[FAVORITES] = savedToggled
     }
 
-    private fun List<Restauran>.restoreSelections(): List<Restauran> {
+    private fun getRestaurants() {
+        viewModelScope.launch(errorHandler) {
+            val restaurants = getRemoteRestaurants()
+            state.value = restaurants.restoreSelections()
+        }
+    }
+
+    private suspend fun getRemoteRestaurants(): List<Restaurant> {
+        return withContext(Dispatchers.IO) {
+            val response = restInterface.getRestaurants()
+            println("Data dari API: $response")
+            response
+        }
+    }
+
+
+
+    private fun List<Restaurant>.restoreSelections(): List<Restaurant> {
         stateHandle.get<List<Int>?>(FAVORITES)?.let { selectedIds ->
             val restaurantsMap = this.associateBy { it.id }
             selectedIds.forEach { id ->
@@ -39,5 +77,4 @@ class RestaurantsViewModel(private val stateHandle: SavedStateHandle) : ViewMode
     companion object {
         const val FAVORITES = "favorites"
     }
-
 }
