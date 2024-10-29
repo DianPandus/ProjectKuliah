@@ -29,35 +29,24 @@ fun RestaurantDetailsScreen() {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         )
-        Text(
-            text = "Dian Pandu Syahfitra",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-        )
-        Text(
-            text = "225150200111032",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-        )
 
-        // Display the restaurant details if available
         if (item != null) {
-            RestaurantIcon(
-                Icons.Filled.Place,
-                Modifier.padding(top = 32.dp, bottom = 32.dp)
+            Text(
+                text = item.title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
-            RestaurantDetails(
-                item.title,
-                item.description,
-                Modifier.padding(bottom = 32.dp),
-                Alignment.CenterHorizontally
+            Text(
+                text = item.description,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
+        } else {
+            Text("Loading or No Details Available")
         }
-
-        Text("More info coming soon!")
     }
 }

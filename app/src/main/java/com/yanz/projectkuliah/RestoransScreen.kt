@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.material.ContentAlpha
 import androidx.wear.compose.material.LocalContentAlpha
 import com.yanz.projectkuliah.ui.theme.projectkuliah
+import com.yanz.projectkuliahpackage.RestaurantsViewModel
 
 @Composable
 fun RestaurantsScreen(onItemClick: (id: Int) -> Unit) {
@@ -32,15 +33,20 @@ fun RestaurantsScreen(onItemClick: (id: Int) -> Unit) {
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
+        // Display name and NIM at the top
         Text(
-            text = "Dian Pandu Syahfitra",
-            style = MaterialTheme.typography.titleLarge
+            text = "Dian Pandu Syahfitra",  // Replace with actual name
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        Text(
+            text = "225150200111032",  // Replace with actual NIM
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Text(
-            text = "225150200111032",
-            style = MaterialTheme.typography.bodyLarge
-        )
+        // LazyColumn for displaying restaurant items
         LazyColumn(
             contentPadding = PaddingValues(
                 vertical = 8.dp,
@@ -48,23 +54,28 @@ fun RestaurantsScreen(onItemClick: (id: Int) -> Unit) {
             )
         ) {
             items(viewModel.state.value) { restaurant ->
-                RestaurantItem(restaurant,
-                    onFavoriteClick = { id -> viewModel.toggleFavorite(id) },
-                    onItemClick = { id -> onItemClick(id) })
+                RestaurantItem(
+                    item = restaurant,
+                    onFavoriteClick = { id ->
+                        viewModel.toggleFavorite(id, restaurant.isFavorite) // Pass `oldValue` here
+                    },
+                    onItemClick = { id -> onItemClick(id) }
+                )
             }
         }
     }
 }
 
-@Composable
-fun RestaurantItem(item: Restaurant?, onFavoriteClick: (id: Int) -> Unit, onItemClick: (id: Int) -> Unit) {
-    if (item == null) return  // Cegah jika item bernilai null
 
+
+@Composable
+fun RestaurantItem(item: Restaurant,
+                   onFavoriteClick: (id: Int) -> Unit,
+                   onItemClick: (id: Int) -> Unit) {
     val icon = if (item.isFavorite)
         Icons.Filled.Favorite
     else
         Icons.Filled.FavoriteBorder
-
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
@@ -84,7 +95,6 @@ fun RestaurantItem(item: Restaurant?, onFavoriteClick: (id: Int) -> Unit, onItem
     }
 }
 
-
 @Composable
 fun RestaurantIcon(icon: ImageVector, modifier: Modifier, onClick: () -> Unit = { }) {
     Image(
@@ -103,14 +113,14 @@ fun RestaurantDetails(title: String,
     Column(modifier = modifier, horizontalAlignment = horizontalAlignment) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge  // Mengganti h6 dengan titleLarge
+            style = MaterialTheme.typography.titleLarge
         )
         CompositionLocalProvider(
             LocalContentAlpha provides ContentAlpha.medium
         ) {
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodyMedium  // Mengganti body2 dengan bodyMedium
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -120,6 +130,6 @@ fun RestaurantDetails(title: String,
 @Composable
 fun DefaultPreview() {
     projectkuliah {
-        RestaurantsScreen({ })
+        RestaurantsScreen({})
     }
 }

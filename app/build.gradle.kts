@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt") // Correct way to add kapt in build.gradle.kts
 }
 
 android {
@@ -52,7 +53,7 @@ android {
 dependencies {
     // Core KTX and AppCompat
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat) // Menambahkan AppCompat
+    implementation(libs.androidx.appcompat)
 
     // Material 3 and Compose libraries
     implementation(libs.androidx.material3)
@@ -74,11 +75,15 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     // Retrofit and Gson for API calls and JSON parsing
-    implementation(libs.retrofit) // Menambahkan Retrofit
-    implementation(libs.gson) // Menambahkan Gson
+    implementation(libs.retrofit)
+    implementation(libs.gson)
     implementation(libs.retrofit.converter.gson)
-    implementation(libs.androidx.navigation.compose) // Menambahkan Retrofit Gson Converter
+    implementation(libs.androidx.navigation.compose)
 
+    // Room dependencies
+    implementation("androidx.room:room-runtime:2.6.1") // Room runtime
+    implementation("androidx.room:room-ktx:2.6.1") // Room Kotlin extensions
+    kapt("androidx.room:room-compiler:2.6.1") // Room annotation processor
 
     // Testing dependencies
     testImplementation(libs.junit)
@@ -90,7 +95,8 @@ dependencies {
     // Debug dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
 }
-
